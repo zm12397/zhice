@@ -50,6 +50,10 @@ public class KnifeDO {
     @OneToMany(mappedBy = "knife")
     private List<DataFileDO> dataFiles;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "knife")
+    private List<RecordDO> records;
+
     public Long getId() {
         return id;
     }
@@ -122,7 +126,15 @@ public class KnifeDO {
         this.dataFiles = dataFiles;
     }
 
-    public KnifeDO(Date gmtCreate, Date gmtModified, Short state, String name, String number, Double life, SysUserDO committer, List<DataFileDO> dataFiles) {
+    public List<RecordDO> getRecords() {
+        return records;
+    }
+
+    public void setRecords(List<RecordDO> records) {
+        this.records = records;
+    }
+
+    public KnifeDO(Date gmtCreate, Date gmtModified, Short state, String name, String number, Double life, SysUserDO committer, List<DataFileDO> dataFiles, List<RecordDO> records) {
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
         this.state = state;
@@ -131,6 +143,7 @@ public class KnifeDO {
         this.life = life;
         this.committer = committer;
         this.dataFiles = dataFiles;
+        this.records = records;
     }
 
     public KnifeDO() {
@@ -148,6 +161,7 @@ public class KnifeDO {
                 ", life=" + life +
                 ", committer=" + committer.getId() +
                 ", dataFiles=" + dataFiles +
+                ", records=" + records +
                 '}';
     }
 }

@@ -1,8 +1,12 @@
 package com.mm.zhice.controller;
 
 import com.mm.zhice.CustomerException;
+import com.mm.zhice.pojo.DataFileDO;
+import com.mm.zhice.pojo.KnifeDO;
 import com.mm.zhice.pojo.NormalResultDTO;
 import com.mm.zhice.service.FileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * 文件操作相关controller
@@ -25,22 +30,22 @@ public class FileController {
 	@Autowired
 	private FileService fileService;
 
-	/*@RequestMapping(value = "/head/upload.action", method = RequestMethod.POST)
-	public NormalResultDTO headUpload(MultipartFile file, HttpServletRequest request) {
-		NormalResultDTO result = new NormalResultDTO("9999", "unknown error", null);
-		// 先验证图片格式
-		String filename = file.getOriginalFilename(); // 上传时的文件名
-		*//*if (!fileService.validateImgType(filename)) { // 图片格式错误
-			result.setMessage("该文件不是图片格式");
+	private Logger log = LoggerFactory.getLogger(FileController.class);
+
+	@RequestMapping(value = "/data.action", method = RequestMethod.POST)
+	public NormalResultDTO datafile(MultipartFile file, HttpServletRequest request) {
+		NormalResultDTO result = new NormalResultDTO("9999","unknown error",null);
+		final String filename = file.getOriginalFilename();
+		if(!fileService.validate(filename)){
+			result.setMessage("文件类型不正确");
 			return result;
-		}*//*
+		}
 		// 获取项目所在绝对路径
-		String path = ClassUtils.getDefaultClassLoader().getResource("")
-				.getPath()*//* "D:\\workspace\\web-workspace2\\Gleaning\\src\\main\\resources" *//*;
+		String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
 		File localFile = null;
-		try {
-			localFile = fileService.saveFile(filename, path, 0);
-		} catch (CustomerException e) {
+		try{
+			localFile = fileService.saveFile(filename,path);
+		}catch(CustomerException e){
 			result.setMessage(e.getMessage());
 			return result;
 		}
@@ -57,22 +62,21 @@ public class FileController {
 			result.setMessage("文件读写异常");
 			return result;
 		}
-		FileResourcesDO fileResources = new FileResourcesDO();
-		log.info(localFile.getName());
-		fileResources.setUrl(localFile.getName());
-		try {
-			fileService.addFileResources(fileResources);
-		} catch (CustomerException e) {
+		DataFileDO dataFile = new DataFileDO();
+		dataFile.setPath(localFile.getName());
+		try{
+			fileService.addDataFile(dataFile);
+		}catch(CustomerException e){
 			result.setMessage(e.getMessage());
 			return result;
 		}
-		if (fileResources.getId() != null && fileResources.getId() != 0) {
+		if(dataFile.getId() != null){
 			result.setCode("0000");
-			result.setMessage("上传成功");
-			result.setData(fileResources);
+			result.setMessage("文件上传成功");
+			result.setData(dataFile.getId());
+		}else{
+			result.setMessage("文件上传失败");
 		}
-		log.info(result.toString());
 		return result;
-	}*/
-
+	}
 }

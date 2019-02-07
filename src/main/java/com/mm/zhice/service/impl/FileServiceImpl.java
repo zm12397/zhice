@@ -2,6 +2,7 @@ package com.mm.zhice.service.impl;
 
 import com.mm.zhice.CustomerException;
 import com.mm.zhice.dao.DataFileDao;
+import com.mm.zhice.pojo.DataFileDO;
 import com.mm.zhice.service.FileService;
 import com.mm.zhice.util.TimeUtils;
 import org.slf4j.Logger;
@@ -23,49 +24,84 @@ public class FileServiceImpl implements FileService {
 	@Autowired
 	private DataFileDao dataFileDao;
 	
-	public static final String USER_IMG_UPLOAD_PATH = "/static/img/user/";
-	public static final String USER_IMG_NM_PREFIX = "user_img_";
+	private static final String DEFAULT_DATA_UPLOAD_PATH = "/static/file/data/batch/";
+	private static final String DEFAULT_SPLIT = "_";
+	/*private static final String USER_IMG_NM_PREFIX = "user_img_";
 	public static final String CERTIFICATE_IMG_UPLOAD_PATH = "/static/img/certificate/";
-	public static final String CERTIFICATE_IMG_NM_PREFIX = "certificate_img_";
+	public static final String CERTIFICATE_IMG_NM_PREFIX = "certificate_img_";*/
 	// 有效的文件后缀
-	private static List<String> validedFileNameList = Arrays.asList("jpg", "gif", "bmp", "png", "jpeg", "doc", "docx",
-			"xls", "xlsx", "ppt", "pptx", "swf", "rar", "zip", "pdf", "txt");
-
-	// 有效的图片文件后缀
-	private static List<String> validedImgFileNameList = Arrays.asList("jpg", "gif", "bmp", "png", "jpeg");
+	private static List<String> validedFileNameList = Arrays.asList("zip", "csv");
 
 	// 是否为有效的图片文件
-	public boolean validateImgType(String filename) {
+	@Override
+	public boolean validate(String filename) {
 		// filename = file.getOriginalFilename()
 		String type = filename.substring(filename.indexOf(".") + 1).toLowerCase(); // 获取文件后缀
-		if (!validedImgFileNameList.contains(type)) {
+		if (!validedFileNameList.contains(type)) {
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public File  saveFile(String filename, String path,int type) {
-		// TODO Auto-generated method stub
-		String prefix = USER_IMG_NM_PREFIX;
-		String relativePath = USER_IMG_UPLOAD_PATH;
-		if(type == 1){
-			prefix = CERTIFICATE_IMG_NM_PREFIX;
-			relativePath = CERTIFICATE_IMG_UPLOAD_PATH;
+	public File saveFile(String filename, String path) {
+		if(filename == null){
+			throw new CustomerException("上传文件为空");
 		}
-		String saveName = prefix + TimeUtils.getNow() + "." +
-				filename.substring(filename.indexOf(".") + 1).toLowerCase();
-		log.info(path + relativePath + saveName);
-		File file = new File(path + relativePath + saveName);
-		try {
+		String suffix = filename.substring(filename.indexOf(".") + 1).toLowerCase();
+		String dataFileName = generateDataFileName("knife",suffix,null);
+		File file = new File(path + DEFAULT_DATA_UPLOAD_PATH + dataFileName);
+		try{
 			file.createNewFile();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
-			log.error("文件资源本地创建失败：" + e.getMessage());
-			throw new CustomerException("文件资源本地创建失败");
+		}catch (IOException e){
+			log.error("创建本地文件资源失败：" + e.getMessage());
+			throw new CustomerException("创建本地文件资源失败");
 		}
 		return file;
-		
+	}
+
+	@Override
+	public void addDataFile(DataFileDO dataFile) {
+		try {
+			dataFileDao.save(dataFile);
+		}catch (Exception e){
+			log.error("数据对象持久化异常" +e.getMessage());
+			throw new CustomerException("数据对象持久化异常");
+		}
+	}
+
+	@Override
+	public DataFileDO getDataFile(Long fileId) {
+		DataFileDO dataFile = null;
+		try {
+			dataFile = dataFileDao.findOne(fileId);
+			return dataFile;
+		}catch (Exception e) {
+			log.error("数据对象查询失败" + e.getMessage());
+			throw new CustomerException("数据对象查询失败");
+		}
+	}
+
+	@Override
+	public void update(DataFileDO dataFile) {
+		try {
+			dataFileDao.save(dataFile);
+		}catch (Exception e) {
+			log.error("数据对象更新失败" + e.getMessage());
+			throw new CustomerException("数据对象更新失败");
+		}
+	}
+
+	private String generateDataFileName(String prefix,String suffix,String split){
+		String splitStr = split == null ? split : DEFAULT_SPLIT;
+		StringBuilder stringBuilder = new StringBuilder();
+		if(prefix != null){
+			stringBuilder.append(prefix);
+		}
+		stringBuilder.append(splitStr).append(TimeUtils.getNow());
+		if(suffix != null){
+			stringBuilder.append(".").append(suffix);
+		}
+		return stringBuilder.toString();
 	}
 }

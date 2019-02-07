@@ -1,6 +1,8 @@
 package com.mm.zhice.controller;
 
+import com.mm.zhice.CustomerException;
 import com.mm.zhice.pojo.NormalResultDTO;
+import com.mm.zhice.pojo.SysUserDO;
 import com.mm.zhice.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -11,33 +13,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * 登录相关功能controller
- * 
- * @author zm
  *
+ * @author zm
  */
 @RestController
 @RequestMapping("/login")
 public class LoginController {
-	private Logger log = LoggerFactory.getLogger(LoginController.class);
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private UserService userService;
+    /**
+     * 功能：登录
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    @RequestMapping(value = "/login.action", method = RequestMethod.POST)
+    public NormalResultDTO login(String username, String password, HttpSession session) {
+        NormalResultDTO result = new NormalResultDTO("9999", "unknown error", null);
+        SysUserDO user = null;
+        try {
+            user = userService.getUser(username,password);
+            if(user != null) {
+                result.setCode("0000");
+                result.setMessage("登录成功");
+                session.setAttribute("user", user.getId());
+            }
+        } catch (CustomerException e) {
+            result.setMessage(e.getMessage());
 
-	/**
-	 * 功能：登录
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 */
-	@RequestMapping(value = "/login.action", method = RequestMethod.POST)
-	public NormalResultDTO login(String username, String password) {
-		NormalResultDTO result = new NormalResultDTO("9999", "unknown error", null);
+        }
 		/*try {
 			UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password.toCharArray());
 			// usernamePasswordToken.setRememberMe(true);// 记住我
@@ -70,6 +82,6 @@ public class LoginController {
 			log.info("登录异常" + e.getMessage());
 			result.setMessage("登录异常");
 		}*/
-		return result;
-	}
+        return result;
+    }
 }

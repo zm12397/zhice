@@ -39,6 +39,11 @@ public class RecordDO {
     @JoinColumn(name = "data_file_id")
     private DataFileDO dataFile;
 
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "knife_id")
+    private KnifeDO knife;
+
     public Long getId() {
         return id;
     }
@@ -87,12 +92,21 @@ public class RecordDO {
         this.dataFile = dataFile;
     }
 
-    public RecordDO(Date gmtCreate, Date gmtModified, Double finalLife, SysUserDO committer, DataFileDO dataFile) {
+    public KnifeDO getKnife() {
+        return knife;
+    }
+
+    public void setKnife(KnifeDO knife) {
+        this.knife = knife;
+    }
+
+    public RecordDO(Date gmtCreate, Date gmtModified, Double finalLife, SysUserDO committer, DataFileDO dataFile, KnifeDO knife) {
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
         this.finalLife = finalLife;
         this.committer = committer;
         this.dataFile = dataFile;
+        this.knife = knife;
     }
 
     public RecordDO() {
@@ -106,6 +120,7 @@ public class RecordDO {
                 ", gmtModified=" + gmtModified +
                 ", finalLife=" + finalLife +
                 ", committer=" + committer.getId() +
+                ", knife=" + knife.getId() +
                 ", dataFile=" + dataFile.getId() +
                 '}';
     }

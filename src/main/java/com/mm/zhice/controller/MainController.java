@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/")
 public class MainController {
-	private Logger logger = LoggerFactory.getLogger(MainController.class);
 	/**
 	 * 主视图映射
 	 * @param page

@@ -4,6 +4,6 @@ import com.mm.zhice.pojo.SysUserDO;
 
 import java.util.List;
 
-public interface SysUserDao extends BaseDao<SysUserDO,Integer>{
-	List<SysUserDO> findByUsername(String username);
+public interface SysUserDao extends BaseDao<SysUserDO,Long>{
+	SysUserDO findByUsername(String username);
 }
