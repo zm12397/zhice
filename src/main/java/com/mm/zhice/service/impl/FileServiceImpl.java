@@ -93,7 +93,7 @@ public class FileServiceImpl implements FileService {
 	}
 
 	private String generateDataFileName(String prefix,String suffix,String split){
-		String splitStr = split == null ? split : DEFAULT_SPLIT;
+		String splitStr = split != null ? split : DEFAULT_SPLIT;
 		StringBuilder stringBuilder = new StringBuilder();
 		if(prefix != null){
 			stringBuilder.append(prefix);

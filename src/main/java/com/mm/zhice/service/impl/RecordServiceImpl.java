@@ -45,6 +45,7 @@ public class RecordServiceImpl implements RecordService {
 			record.setDataFile(dataFile);
 			record.setCommitter(knife.getCommitter());
 			record.setFinalLife(life);
+			record.setKnife(knife);
 			recordDao.save(record);
 			dataFile.setRecord(record);
 			fileService.update(dataFile);
@@ -58,7 +59,7 @@ public class RecordServiceImpl implements RecordService {
 	@Override
 	public Page<RecordDO> listRecords(Integer page, Integer rows) {
 		Page<RecordDO> records;
-		Sort sort = new Sort(Sort.Direction.DESC,"gmt_create");
+		Sort sort = new Sort(Sort.Direction.DESC,"gmtCreate");
 		Pageable pageable = new PageRequest(page, rows, sort);
 		try {
 			records = recordDao.findAll(pageable);
@@ -71,7 +72,15 @@ public class RecordServiceImpl implements RecordService {
 
 	@Override
 	public List<RecordDO> listRecords(KnifeDO knife) {
-		return knife.getRecords();
+		List<RecordDO> records;
+		try {
+			records = recordDao.findByKnifeOrderByGmtCreate(knife);
+		} catch (Exception e) {
+			log.error("实时预测记录查询失败：" + e.getMessage());
+			throw new CustomerException("实时预测记录查询失败");
+		}
+		return records;
+//		return knife.getRecords();
 	}
 
 	private Double predict(DataFileDO dataFile){

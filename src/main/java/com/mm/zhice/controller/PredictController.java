@@ -51,6 +51,7 @@ public class PredictController {
 				knife = new KnifeDO();
 				knife.setCommitter((SysUserDO) session.getAttribute("user"));
 				knife.setNumber(number);
+				knife.setState((short) 1);
 				knifeService.addKnife(knife);
 			}else{
 				knife = knifeService.getKnife(knifeID);

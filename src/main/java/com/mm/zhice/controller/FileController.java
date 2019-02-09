@@ -63,7 +63,7 @@ public class FileController {
 			return result;
 		}
 		DataFileDO dataFile = new DataFileDO();
-		dataFile.setPath(localFile.getName());
+		dataFile.setPath(localFile.getAbsolutePath());
 		try{
 			fileService.addDataFile(dataFile);
 		}catch(CustomerException e){
