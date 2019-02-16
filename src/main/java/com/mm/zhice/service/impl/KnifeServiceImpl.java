@@ -35,7 +35,7 @@ public class KnifeServiceImpl implements KnifeService {
     @Override
     public void addKnife(KnifeDO knife) {
         try {
-            knifeDao.save(knife);
+            knifeDao.saveAndFlush(knife);
         }catch (Exception e){
             log.error("刀具持久化失败" + e.getMessage());
             throw new CustomerException("刀具持久化失败");
@@ -49,8 +49,8 @@ public class KnifeServiceImpl implements KnifeService {
             knife = knifeDao.findOne(knifeID);
             return knife;
         }catch (Exception e){
-            log.error("刀具持久化失败" + e.getMessage());
-            throw new CustomerException("刀具持久化失败");
+            log.error("刀具查询失败" + e.getMessage());
+            throw new CustomerException("刀具查询失败");
         }
     }
 }

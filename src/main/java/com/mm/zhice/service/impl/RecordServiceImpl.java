@@ -27,7 +27,7 @@ import java.util.Random;
 @Service
 @Transactional
 public class RecordServiceImpl implements RecordService {
-	Logger log = LoggerFactory.getLogger(CompanyService.class);
+	Logger log = LoggerFactory.getLogger(RecordService.class);
 	@Autowired
 	private RecordDao recordDao;
 	@Autowired
