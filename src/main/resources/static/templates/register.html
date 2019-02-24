@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>注册</title>
+    <link rel="stylesheet" type="text/css" href="../css/register.css" th:href="@{css/register.css}">
+    <link type="text/css" href="../css/bootstrap.min.css" rel="stylesheet"  th:href="@{css/bootstrap.min.css}"/>
+    <!--@*1、组件引用*@@-->
+    <script src="../js/jquery.min.js" th:src="@{js/jquery.min.js}"></script>
+    <script src="../js/ajaxfileupload.js" th:src="@{js/ajaxfileupload.js}"></script>
+    <script src="../js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
+
+</head>
+<body>
+<h1>刀具寿命预测平台</h1>
+<div>
+    <form>
+        <div class="box">
+            <h2>用户注册</h2>
+            <div id="error_box"></div>
+            <div class="input_box">
+                <input type="text" placeholder="公司名称" id="name" name="name"/>
+            </div>
+            <div class="input_box">
+                <input type="text" placeholder="公司编号" id="number" name="number"/>
+            </div>
+            <div class="input_box">
+                <input type="text" placeholder="用户名" id="username" name="username"/>
+            </div>
+            <div class="input_box">
+                <input type="password" placeholder="密码" id="password" name="password"/>
+            </div>
+            <div class="input_box">
+                <input type="password" placeholder="重新输入密码" id="password1" name="password1"/>
+            </div>
+            <div class="input_box">
+                <!-- type="button"这里的要这样写不让页面会默认为type="submit"，ajax 提交时页面是不用刷新页面的   而表单提交需要刷新，这里我们是不用刷新色-->
+                <button id="register" type="button">注册</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script th:src="@{js/register.js}"></script>
+<script th:src="@{layer/layer.js}"></script>
+</body>
+</html>
